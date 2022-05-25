@@ -17,6 +17,9 @@ async function Main(){
 async function GetUpdated(){
 
    var backendResponse = await GetFromBackend();
+   if (backendResponse == false){
+        return false;
+   }
    $(".photosContainer").html("");
        backendResponse.users.forEach(element => {
         var onFire = false;
@@ -70,9 +73,21 @@ function addUserById(id, inRoom, onFire){
 async function GetFromBackend(){
 
     await timeout(1000);
-    postResult = await Promise.resolve($.get(getUrl));
-    return postResult;
-    return ({"users":[{"id": 1, "ir": true, "last": 1653393503}, {"id": 2, "ir": false, "last": 1653393504}, {"id": 3, "ir": true, "last": 1653393504}]});
+    try{
+        getResult = await Promise.resolve($.get(getUrl));
+        if (getResult.data == undefined || getResult == undefined){
+            
+            GetUpdatedFailed();
+            return false;
+
+        }
+        return getResult.data ;
+    }
+    catch {
+        GetUpdatedFailed();
+        return false;
+    } 
+    //return ({"users":[{"id": 1, "ir": true, "last": 1653393503}, {"id": 2, "ir": false, "last": 1653393504}, {"id": 3, "ir": true, "last": 1653393504}]});
 
 }
 
@@ -80,6 +95,16 @@ function timeout(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function GetUpdatedFailed(){
+
+    $(".photosContainer").html(`<h1> yo guys, we had no luck with getting data from server :( 
+        
+        <img src="Photos/fail.gif" style="text-align:center;" alt="">
+        
+        </h1>    
+    `);
+
+}
 
 
 
