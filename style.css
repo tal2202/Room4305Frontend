@@ -1,0 +1,44 @@
+h1{
+    color: aliceblue;
+    text-align: center;
+    font-size: 3rem;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;    
+}
+img{
+    height: 20rem;
+    width: 20rem;
+}
+.photoContainer{
+
+    height: 20rem;
+    width: 20rem;
+    border-width:0.4rem;
+    border-style: solid;
+    border-color:red;
+    float: left;
+    margin: 15px;
+    padding: 20px;
+
+}
+.photosContainer{
+    /* float: center; */
+}
+
+.photoContainer-ImInside{
+    border-width:0.4rem;
+    border-style:solid;
+    border-color:green;
+}
+.ImOnFireBaby{
+    opacity: 40%;
+    z-index: 2;
+    position:relative;
+    bottom: 20rem;
+}
+.maName{
+    position: relative;
+    bottom: 46rem;
+    text-align: center;
+    font-size: 3rem;
+    font-family: cursive;
+}
