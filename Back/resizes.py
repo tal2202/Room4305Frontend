@@ -11,7 +11,7 @@ def resize():
         file_path = f"{path}/{item}"
         if os.path.isfile(file_path):
             im = Image.open(file_path)
-            im_resize = im.resize((640, 360), Image.ANTIALIAS)
+            im_resize = im.resize((224, 224), Image.ANTIALIAS)
             im_resize.save(f'new/{count}.jpg', 'JPEG', quality=90)
             count += 1
 

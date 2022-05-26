@@ -46,20 +46,20 @@ function addUserById(id, inRoom, onFire){
         
     }
     switch (id) {
-        case 1:
+        case 0:
             var myName = `<div class="maName" ${extraClass}>Eli</div>`;
 
             $(".photosContainer").append(`<div class="photoContainer ${modeClass}" > <img src="Photos/eli.jpg" alt="">  ${classForOnFire} ${myName}</div>`);
             break;
-        case 2:
+        case 1:
             var myName = `<div class="maName" ${extraClass}>Tal</div>`;
             $(".photosContainer").append(`<div class="photoContainer ${modeClass}" >  <img src="Photos/tal.jpg" alt="">  ${classForOnFire} ${myName} </div>`);
             break;
-        case 3:
+        case 2:
             var myName = `<div class="maName" ${extraClass}>Yoni</div>`;
             $(".photosContainer").append(`<div class="photoContainer ${modeClass}" >  <img src="Photos/yonatan.jpg" alt="">  ${classForOnFire} ${myName}</div>`);
             break;
-        case 4:
+        case 3:
             var myName = `<p class="maName">Daniel</p>`;
             $(".photosContainer").append(`<div class="photoContainer ${modeClass}" >  <img src="Photos/pam.jpg" alt="">  ${classForOnFire} ${myName}</div>`);
             break;            
@@ -75,13 +75,13 @@ async function GetFromBackend(){
     await timeout(1000);
     try{
         getResult = await Promise.resolve($.get(getUrl));
-        if (getResult.data == undefined || getResult == undefined){
+        if (getResult == undefined){
             
             GetUpdatedFailed();
             return false;
 
         }
-        return getResult.data ;
+        return getResult ;
     }
     catch {
         GetUpdatedFailed();

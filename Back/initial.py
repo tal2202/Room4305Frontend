@@ -1,46 +1,34 @@
+import json
 import time
 import torch
 import cv2
 import numpy as np
-# from flask import Flask, request, jsonify, abort
-# import os
-# import glob
-# import matplotlib.pyplot as plt
-# import torchvision
-# from torch.utils.data import Dataset, DataLoader
-# import torch.nn as nn
-# import torch.nn.functional as f
-# from albumentations import Flip, Rotate, Compose, Resize, ElasticTransform
-# import random
-# from scipy.ndimage import zoom
-# import math
-# from torch.autograd import Variable
-# from tqdm.notebook import tqdm
-# from sklearn.metrics import log_loss
-# import torchvision.models as models
-# from tensorflow import keras
+from flask import Flask, request, jsonify, abort
+from flask_cors import cross_origin
+from threading import Thread
 
-
-# app = Flask(__name__)
+app = Flask(__name__)
 
 users = {}
 
 # Consts
+VERSION = "0.3"
 NAMES = {
     0: "Eli",
     1: "Tal",
-    2: "Yonatan"
+    2: "Yonatan",
+    3: "Empty"
 }
-SCORE_THRESHOLD = 0
+SCORE_THRESHOLD = 6
 DELTA_THRESHOLD = 10
 MODEL_PATH = "models/model6"
-# device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 device = torch.device('cpu')
 
 
 def get_man_predicted(the_model, img):
+    start = time.time()
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    img = cv2.resize(img, (1280, 720))
+    img = cv2.resize(img, (224, 224))
     img = np.transpose(img, (2, 0, 1))
     img = torch.tensor(img)
     img.unsqueeze_(0)
@@ -50,7 +38,8 @@ def get_man_predicted(the_model, img):
     outputs = the_model(img)
     score = torch.max(outputs)
     _, user = torch.max(outputs, 1)
-    # print(score)
+    end = time.time()
+    print(f"user: {NAMES[int(user)]}. score: {float(score)}. time: {end - start}")
     if score < SCORE_THRESHOLD:
         return -1, -1
     return score, user
@@ -96,31 +85,36 @@ def handle_result(user):
                 # print("Delta too soon")
 
 
-# @app.route("/getUsers", methods=['GET'])
+@app.route("/getUpdated", methods=['GET'])
+@cross_origin()
 def get_users():
     arr = []
     for user in users:
         arr.append({"id": user, "ir": users[user]["ir"], "last": users[user]["last"]})
-    final = {"users": arr}
+    final = {"users": arr, "version": VERSION}
     return final
 
 
 def camera():
-    vidcap = cv2.VideoCapture(0)
-    if vidcap.isOpened():
+    video_cap = cv2.VideoCapture(0)
+    if video_cap.isOpened():
         while True:
-            ret, frame = vidcap.read()
+            ret, frame = video_cap.read()
             if ret:
-                # print(users)
                 user = get_result(frame)
                 handle_result(user)
-                time.sleep(0.1)
+                # time.sleep(2)
     else:
         print("cannot open camera")
 
 
-# start()
 if __name__ == '__main__':
     print("Started")
-    camera()
-    # app.run(host='0.0.0.0', port=4180)
+
+    # Camera
+    worker = Thread(target=camera)
+    worker.daemon = True
+    worker.start()
+
+    # Flask
+    app.run(host='0.0.0.0', port=4180)
